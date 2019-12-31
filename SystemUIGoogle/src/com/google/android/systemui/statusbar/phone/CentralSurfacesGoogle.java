@@ -34,6 +34,7 @@ import android.widget.ImageView;
 
 import com.android.internal.jank.InteractionJankMonitor;
 import com.android.internal.logging.MetricsLogger;
+import com.android.internal.util.pixys.PixysUtils;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.ViewMediatorCallback;
 import com.android.systemui.Dependency;
@@ -339,7 +340,16 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
         if (mReverseChargingViewControllerOptional.isPresent()) {
             mReverseChargingViewControllerOptional.get().initialize();
         }
-        mNotificationLockscreenUserManagerGoogle.updateSmartSpaceVisibilitySettings();
+        mNotificationLockscreenUserManagerGoogle.updateSmartSpaceVisibilitySettings(); 
+        enableOsloPlugin();
+       }
+      private void enableOsloPlugin() {
+        if (PixysUtils.isPackageInstalled(mContext, "com.google.oslo")) {
+            PixysUtils.setComponentState(mContext, "com.google.oslo", "com.google.oslo.OsloOverlay", true);
+            PixysUtils.setComponentState(mContext, "com.google.oslo", "com.google.oslo.OsloSensorManager", true);
+            PixysUtils.setComponentState(mContext, "com.google.oslo", "com.google.oslo.service.OsloService", true);
+        }
+
     }
 
     @Override
