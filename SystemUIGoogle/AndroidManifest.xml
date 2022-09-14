@@ -64,6 +64,9 @@
     <protected-broadcast android:name="com.google.android.apps.privacy.wildlife.WIFI_STATE_CHANGED"/>
     <uses-permission android:name="com.google.android.ambientindication.permission.AMBIENT_INDICATION"/>
 
+    <!-- Ambient pulse event -->
+    <protected-broadcast android:name="com.android.systemui.doze.pulse" />
+
     <application>
         <service android:exported="true" android:name="com.google.android.systemui.elmyra.ElmyraServiceProxy" android:permission="com.google.android.elmyra.permission.CONFIGURE_ASSIST_GESTURE"/>
         <service android:exported="true" android:name="com.google.android.systemui.columbus.ColumbusServiceProxy" android:permission="com.google.android.columbus.permission.CONFIGURE_COLUMBUS_GESTURE"/>
