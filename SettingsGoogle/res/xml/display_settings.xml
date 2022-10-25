@@ -16,7 +16,7 @@
             settings:useAdminDisabledSummary="true"
             settings:userRestriction="no_config_brightness" />
 
-        <com.android.settingslib.PrimarySwitchPreference
+        <com.android.settings.display.AutoBrightnessPreference
             android:fragment="com.android.settings.display.AutoBrightnessSettings"
             android:key="auto_brightness_entry"
             android:title="@string/auto_brightness_title"
@@ -125,6 +125,7 @@
             android:title="@string/min_refresh_rate_title"
             android:summary="@string/summary_placeholder"
             settings:controller="com.android.settings.display.MinRefreshRatePreferenceController" />
+
         <ListPreference
             android:key="max_refresh_rate"
             android:title="@string/max_refresh_rate_title"
@@ -133,9 +134,9 @@
 
         <SwitchPreference
             android:key="peak_refresh_rate"
-            android:summary="@string/peak_refresh_rate_summary"
             android:title="@string/peak_refresh_rate_title"
-            settings:controller="com.android.settings.display.PeakRefreshRatePreferenceController" />
+            android:summary="@string/peak_refresh_rate_summary"
+            settings:controller="com.android.settings.display.PeakRefreshRatePreferenceController"/>
 
         <SwitchPreference
             android:key="touch_sensitivity"
@@ -172,6 +173,13 @@
             android:fragment="com.android.settings.display.VrDisplayPreferencePicker"
             android:key="vr_display_pref"
             android:title="@string/display_vr_pref_title" />
+
+
+       <com.pixys.support.preference.SystemSettingSwitchPreference
+            android:key="qs_footer_data_usage"
+            android:title="@string/qs_footer_datausage_title"
+            android:summary="@string/qs_footer_datausage_summary"
+            android:defaultValue="false" />
 
     </PreferenceCategory>
 

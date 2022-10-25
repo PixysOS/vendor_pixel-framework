@@ -81,16 +81,6 @@
         android:title="@string/ringtone_title"
         settings:keywords="@string/sound_settings" />
 
-    <!-- Phone ringtone for Slot2 -->
-    <com.android.settings.DefaultRingtonePreference
-        android:key="ringtone2"
-        android:title="@string/ringtone_title"
-        android:dialogTitle="@string/ringtone_title"
-        android:summary="@string/summary_placeholder"
-        android:ringtoneType="ringtone"
-        settings:allowDividerAbove="false"
-        android:order="-119"/>
-
     <Preference
         android:fragment="com.android.settings.notification.SpatialAudioSettings"
         android:key="spatial_audio_summary"
@@ -137,6 +127,14 @@
         android:ringtoneType="alarm"
         android:summary="@string/summary_placeholder"
         android:title="@string/alarm_ringtone_title" />
+
+    <!-- Volume panel to left -->
+    <com.pixys.support.preference.SystemSettingSwitchPreference
+        android:key="volume_panel_on_left"
+        android:title="@string/volume_panel_on_left_title"
+        android:summary="@string/volume_panel_on_left_summary"
+        android:defaultValue="false"
+        android:order="-28" />
 
     <SwitchPreference
         android:key="dial_pad_tones"
