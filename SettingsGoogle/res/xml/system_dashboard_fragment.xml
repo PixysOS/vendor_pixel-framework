@@ -27,8 +27,8 @@
         android:summary="@string/theme_customization_summary"
         android:icon="@drawable/ic_settings_themes"
         android:order="-240"
-        android:fragment="com.pixys.settings.themes.ThemeSettings"
-        settings:controller="com.pixys.settings.themes.ThemeSettingsPreferenceController"/>
+        android:fragment="com.pixys.settings.theme.ThemeSettings"
+        settings:controller="com.pixys.settings.theme.ThemeSettingsPreferenceController"/>
 
     <Preference
         android:fragment="com.android.settings.datetime.DateTimeSettings"
