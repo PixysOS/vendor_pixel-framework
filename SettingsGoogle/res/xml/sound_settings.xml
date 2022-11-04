@@ -104,6 +104,22 @@
         settings:controller="com.android.settings.accessibility.VibrationPreferenceController"
         settings:keywords="@string/keywords_vibration" />
 
+    <ListPreference
+        android:key="vibration_pattern"
+        android:title="@string/vibration_pattern_title"
+        android:order="-85"
+        android:entries="@array/vibration_pattern_entries"
+        android:entryValues="@array/vibration_pattern_values"/>
+
+    <!-- Custom ringtone vibration pattern preference -->
+    <Preference
+        android:key="custom_vibration_pattern"
+        android:title="@string/custom_vibration_pattern_title"
+        android:summary="@string/custom_vibration_pattern_summary"
+        android:order="-83"
+        android:fragment="com.android.settings.sound.CustomVibrationPreferenceFragment"
+        android:visibility="gone"/>
+
     <com.android.settingslib.PrimarySwitchPreference
         android:fragment="com.android.settings.gestures.PreventRingingGestureSettings"
         android:key="gesture_prevent_ringing_sound"
@@ -165,6 +181,27 @@
         android:key="vibrate_icon"
         android:order="-27"
         android:title="@string/vibrate_icon_title" />
+
+    <!-- Incall vibration options -->
+    <PreferenceCategory
+        android:key="incall_vib_options"
+        android:title="@string/incall_vibration_category" >
+
+        <com.pixys.support.preference.SystemSettingSwitchPreference
+            android:key="vibrate_on_connect"
+            android:title="@string/incall_vibrate_connect_title"
+            android:defaultValue="false" />
+
+        <com.pixys.support.preference.SystemSettingSwitchPreference
+            android:key="vibrate_on_callwaiting"
+            android:title="@string/incall_vibrate_call_wait_title"
+            android:defaultValue="false" />
+
+        <com.pixys.support.preference.SystemSettingSwitchPreference
+            android:key="vibrate_on_disconnect"
+            android:title="@string/incall_vibrate_disconnect_title"
+            android:defaultValue="false" />
+    </PreferenceCategory>
 
     <DropDownPreference
         android:key="dock_audio_media"

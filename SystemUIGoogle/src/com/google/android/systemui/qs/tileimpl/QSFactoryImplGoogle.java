@@ -53,7 +53,8 @@ import com.android.systemui.qs.tiles.HeadsUpTile;
 import com.android.systemui.qs.tiles.CaffeineTile;
 import com.android.systemui.qs.tiles.DataSwitchTile;
 import com.android.systemui.qs.tiles.PowerShareTile;
-
+import com.android.systemui.qs.tiles.SoundSearchTile;
+import com.android.systemui.qs.tiles.AODTile;
 import com.android.systemui.util.leak.GarbageMonitor;
 import com.google.android.systemui.qs.tiles.BatterySaverTileGoogle;
 import com.google.android.systemui.qs.tiles.ReverseChargingTile;
@@ -109,7 +110,9 @@ public class QSFactoryImplGoogle extends QSFactoryImpl {
             Provider<CaffeineTile> caffeineTileProvider,
             Provider<HeadsUpTile> headsUpTileProvider,
             Provider<DataSwitchTile> dataSwitchTileProvider,
-            Provider<PowerShareTile> powerShareTileProvider) {
+            Provider<PowerShareTile> powerShareTileProvider,
+            Provider<SoundSearchTile> soundSearchTileProvider,
+            Provider<AODTile> aodTileProvider) {
         super(qsHostLazy,
                 customTileBuilderProvider,
                 wifiTileProvider,
@@ -144,7 +147,9 @@ public class QSFactoryImplGoogle extends QSFactoryImpl {
                 caffeineTileProvider,
                 headsUpTileProvider,
                 dataSwitchTileProvider,
-                powerShareTileProvider);
+                powerShareTileProvider,
+                soundSearchTileProvider,
+                aodTileProvider);
         mReverseChargingTileProvider = reverseChargingTileProvider;
         mBatterySaverTileGoogleProvider = batterySaverTileGoogleProvider;
         mCaffeineTileProvider = caffeineTileProvider;
