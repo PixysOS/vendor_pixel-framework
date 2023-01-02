@@ -88,6 +88,12 @@
         android:title="@string/spatial_audio_title"
         settings:controller="com.android.settings.notification.SpatialAudioParentPreferenceController" />
 
+    <SwitchPreference
+        android:key="volume_panel_on_left"
+        android:title="@string/volume_panel_on_left_title"
+        android:summary="@string/volume_panel_on_left_summary"
+        android:order="-138" />
+
     <Preference
         android:fragment="com.android.settings.sound.MediaControlsSettings"
         android:key="media_controls_summary"
@@ -135,6 +141,22 @@
         android:summary="@string/summary_placeholder"
         android:title="@string/notification_ringtone_title" />
 
+    <ListPreference
+        android:key="notification_vibration_pattern"
+        android:title="@string/notification_vibration_pattern_title"
+        android:entries="@array/notification_vibration_pattern_entries"
+        android:entryValues="@array/vibration_pattern_values"
+        android:order="-67" />
+
+    <!-- Custom notification vibration pattern preference -->
+    <Preference
+        android:key="custom_notification_vibration_pattern"
+        android:title="@string/custom_vibration_pattern_title"
+        android:summary="@string/custom_vibration_pattern_summary"
+        android:fragment="com.android.settings.sound.CustomNotificationVibrationPreferenceFragment"
+        android:visibility="gone"
+        android:order="-63" />
+
     <com.android.settings.DefaultRingtonePreference
         android:dialogTitle="@string/alarm_ringtone_title"
         android:key="alarm_ringtone"
@@ -143,14 +165,6 @@
         android:ringtoneType="alarm"
         android:summary="@string/summary_placeholder"
         android:title="@string/alarm_ringtone_title" />
-
-    <!-- Volume panel to left -->
-    <com.pixys.support.preference.SystemSettingSwitchPreference
-        android:key="volume_panel_on_left"
-        android:title="@string/volume_panel_on_left_title"
-        android:summary="@string/volume_panel_on_left_summary"
-        android:defaultValue="false"
-        android:order="-28" />
 
     <Preference
         android:fragment="com.google.android.settings.notification.ClearCallingSettings"
@@ -164,6 +178,12 @@
         android:key="dial_pad_tones"
         android:order="-50"
         android:title="@string/dial_pad_tones_title" />
+
+    <!-- In-call notifications -->
+    <SwitchPreference
+        android:key="in_call_notifications"
+        android:title="@string/in_call_notifications_title"
+        android:order="-47"/>
 
     <SwitchPreference
         android:key="screen_locking_sounds"

@@ -146,13 +146,13 @@ public class QSFactoryImplGoogle extends QSFactoryImpl {
                 qrCodeScannerTileProvider,
                 oneHandedModeTileProvider,
                 colorCorrectionTileProvider,
+        	dreamTileProvider,
                 caffeineTileProvider,
                 headsUpTileProvider,
                 dataSwitchTileProvider,
                 powerShareTileProvider,
                 soundSearchTileProvider,
-                aodTileProvider,
-                dreamTileProvider);
+                aodTileProvider);
         mReverseChargingTileProvider = reverseChargingTileProvider;
         mBatterySaverTileGoogleProvider = batterySaverTileGoogleProvider;
         mCaffeineTileProvider = caffeineTileProvider;
