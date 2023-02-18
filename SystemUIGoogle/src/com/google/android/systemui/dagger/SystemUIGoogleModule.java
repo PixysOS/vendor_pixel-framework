@@ -269,6 +269,9 @@ public abstract class SystemUIGoogleModule {
     @Binds
     abstract ThemeOverlayController provideThemeOverlayController(ThemeOverlayControllerPixys themeOverlayController);
 
+    @Binds
+    abstract ControlsTileResourceConfiguration bindControlsTileResourceConfiguration(GoogleControlsTileResourceConfigurationImpl configuration);
+
     @Provides
     @SysUISingleton
     static BcSmartspaceDataPlugin provideBcSmartspaceDataPlugin() {
