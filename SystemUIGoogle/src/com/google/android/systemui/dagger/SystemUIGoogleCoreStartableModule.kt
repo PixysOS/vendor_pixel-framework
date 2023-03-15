@@ -36,7 +36,6 @@ import com.android.systemui.recents.Recents
 import com.android.systemui.shortcut.ShortcutKeyDispatcher
 import com.android.systemui.statusbar.notification.InstantAppNotifier
 import com.android.systemui.statusbar.phone.KeyguardLiftController
-import com.android.systemui.theme.ThemeOverlayController
 import com.android.systemui.toast.ToastUI
 import com.android.systemui.usb.StorageNotification
 import com.android.systemui.util.NotificationChannels
@@ -44,7 +43,6 @@ import com.android.systemui.util.leak.GarbageMonitor
 import com.android.systemui.volume.VolumeUI
 import com.android.systemui.wmshell.WMShell
 import com.google.android.systemui.GoogleServices
-import com.pixys.android.systemui.theme.ThemeOverlayControllerPixys;
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.ClassKey
@@ -171,12 +169,6 @@ abstract class SystemUIGoogleCoreStartableModule {
     @IntoMap
     @ClassKey(SystemActions::class)
     abstract fun bindSystemActions(sysui: SystemActions): CoreStartable
-
-    /** Inject into ThemeOverlayController.  */
-    @Binds
-    @IntoMap
-    @ClassKey(ThemeOverlayController::class)
-    abstract fun bindThemeOverlayControllerPixys(sysui: ThemeOverlayControllerPixys): CoreStartable
 
     /** Inject into ToastUI.  */
     @Binds
