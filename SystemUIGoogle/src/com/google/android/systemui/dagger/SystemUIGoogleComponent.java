@@ -21,6 +21,9 @@ import com.android.systemui.dagger.DependencyProvider;
 import com.android.systemui.dagger.SysUIComponent;
 import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.dagger.SystemUIModule;
+import com.android.systemui.keyguard.CustomizationProvider;
+import com.android.systemui.statusbar.NotificationInsetsModule;
+import com.android.systemui.statusbar.QsFrameTranslateModule;
 import com.google.android.systemui.dagger.SystemUIGoogleBinder;
 
 import dagger.Subcomponent;
@@ -29,6 +32,8 @@ import dagger.Subcomponent;
 @Subcomponent(modules = {
         DefaultComponentBinder.class,
         DependencyProvider.class,
+        NotificationInsetsModule.class,
+        QsFrameTranslateModule.class,
         SystemUIGoogleBinder.class,
         SystemUIModule.class,
         SystemUIGoogleCoreStartableModule.class,
@@ -39,4 +44,9 @@ public interface SystemUIGoogleComponent extends SysUIComponent {
     interface Builder extends SysUIComponent.Builder {
         SystemUIGoogleComponent build();
     }
+
+   /**
+     * Member injection into the supplied argument.
+     */
+    void inject(CustomizationProvider customizationProvider);
 }

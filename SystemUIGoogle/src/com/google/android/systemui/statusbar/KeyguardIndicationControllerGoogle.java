@@ -33,6 +33,7 @@ import com.android.internal.app.IBatteryStats;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
+import com.android.keyguard.logging.KeyguardLogger;
 import com.android.settingslib.fuelgauge.BatteryStatus;
 import com.android.systemui.R;
 import com.android.systemui.biometrics.FaceHelpMessageDeferral;
@@ -41,6 +42,7 @@ import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.dagger.qualifiers.Background;
 import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.dock.DockManager;
+import com.android.systemui.biometrics.AuthController;
 import com.android.systemui.keyguard.KeyguardIndication;
 import com.android.systemui.keyguard.ScreenLifecycle;
 import com.android.systemui.plugins.FalsingManager;
@@ -49,6 +51,7 @@ import com.android.systemui.statusbar.KeyguardIndicationController;
 import com.android.systemui.statusbar.phone.KeyguardBypassController;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.tuner.TunerService;
+import com.android.systemui.settings.UserTracker;
 import com.android.systemui.util.DeviceConfigProxy;
 import com.android.systemui.util.concurrency.DelayableExecutor;
 import com.android.systemui.util.time.DateFormatUtil;
@@ -69,6 +72,7 @@ public class KeyguardIndicationControllerGoogle extends KeyguardIndicationContro
     private final DateFormatUtil mDateFormatUtil;
     private final DeviceConfigProxy mDeviceConfig;
     private final TunerService mTunerService;
+    private final UserTracker mUserTracker;
     @VisibleForTesting
     protected AdaptiveChargingManager mAdaptiveChargingManager;
     @VisibleForTesting
@@ -97,14 +101,16 @@ public class KeyguardIndicationControllerGoogle extends KeyguardIndicationContro
             @Main DelayableExecutor executor,
             @Background DelayableExecutor bgExecutor,
             FalsingManager falsingManager,
+            AuthController authController,
             LockPatternUtils lockPatternUtils,
             ScreenLifecycle screenLifecycle,
             KeyguardBypassController keyguardBypassController,
             AccessibilityManager accessibilityManager,
             FaceHelpMessageDeferral faceHelpMessageDeferral,
             TunerService tunerService,
-            DeviceConfigProxy deviceConfigProxy) {
-        super(context, mainLooper, wakeLockBuilder, keyguardStateController, statusBarStateController, keyguardUpdateMonitor, dockManager, broadcastDispatcher, devicePolicyManager, iBatteryStats, userManager, executor, bgExecutor, falsingManager, lockPatternUtils, screenLifecycle, keyguardBypassController, accessibilityManager, faceHelpMessageDeferral);
+            DeviceConfigProxy deviceConfigProxy,
+            KeyguardLogger keyguardLogger) {
+        super(context, mainLooper, wakeLockBuilder, keyguardStateController, statusBarStateController, keyguardUpdateMonitor, dockManager, broadcastDispatcher, devicePolicyManager, iBatteryStats, userManager, executor, bgExecutor, falsingManager, authController, lockPatternUtils, screenLifecycle, keyguardBypassController, accessibilityManager, faceHelpMessageDeferral, keyguardLogger);
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context2, Intent intent) {
@@ -133,12 +139,13 @@ public class KeyguardIndicationControllerGoogle extends KeyguardIndicationContro
             }
         };
         mContext = context;
+        mUserTracker = userTracker;
         mBroadcastDispatcher = broadcastDispatcher;
         mTunerService = tunerService;
         mDeviceConfig = deviceConfigProxy;
         mAdaptiveChargingManager = new AdaptiveChargingManager(context);
         mBatteryInfo = iBatteryStats;
-        mDateFormatUtil = new DateFormatUtil(context);
+        mDateFormatUtil = new DateFormatUtil(context, userTracker);
     }
 
     @Override
