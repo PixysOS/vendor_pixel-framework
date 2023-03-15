@@ -30,16 +30,18 @@ public class GoogleServices extends VendorServices {
     private final UiEventLogger mUiEventLogger;
     private final Lazy<ServiceConfigurationGoogle> mServiceConfigurationGoogle;
     private final Lazy<ColumbusServiceWrapper> mColumbusServiceLazy;
+    private final Context mContext;
 
     @Inject
     public GoogleServices(Context context, AlarmManager alarmManager, CentralSurfaces centralSurfaces, UiEventLogger uiEventLogger, Lazy<ServiceConfigurationGoogle> serviceConfigurationGoogleLazy, Lazy<ColumbusServiceWrapper> columbusServiceWrapperLazy) {
-        super(context);
+        super();
         mServices = new ArrayList<>();
         mAlarmManager = alarmManager;
         mCentralSurfaces = centralSurfaces;
         mUiEventLogger = uiEventLogger;
         mServiceConfigurationGoogle = serviceConfigurationGoogleLazy;
         mColumbusServiceLazy = columbusServiceWrapperLazy;
+        mContext = context;
     }
 
     @Override
