@@ -52,6 +52,7 @@ import com.android.systemui.screenshot.ReferenceScreenshotModule;
 import com.android.systemui.shade.NotificationShadeWindowControllerImpl;
 import com.android.systemui.shade.ShadeController;
 import com.android.systemui.shade.ShadeControllerImpl;
+import com.android.systemui.shade.ShadeExpansionStateManager;
 import com.android.systemui.settings.UserContentResolverProvider;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.NotificationLockscreenUserManager;
@@ -76,7 +77,6 @@ import com.android.systemui.statusbar.policy.IndividualSensorPrivacyController;
 import com.android.systemui.statusbar.policy.IndividualSensorPrivacyControllerImpl;
 import com.android.systemui.statusbar.policy.SensorPrivacyController;
 import com.android.systemui.statusbar.policy.SensorPrivacyControllerImpl;
-import com.android.systemui.theme.ThemeOverlayController;
 import com.android.systemui.volume.dagger.VolumeModule;
 
 import com.google.android.systemui.assist.AssistManagerGoogle;
@@ -95,8 +95,6 @@ import com.google.android.systemui.statusbar.dagger.StartCentralSurfacesGoogleMo
 import com.google.android.systemui.statusbar.KeyguardIndicationControllerGoogle;
 import com.google.android.systemui.statusbar.policy.BatteryControllerImplGoogle;
 import com.google.android.systemui.elmyra.ServiceConfigurationGoogle;
-
-import com.pixys.android.systemui.theme.ThemeOverlayControllerPixys;
 
 import javax.inject.Named;
 
@@ -174,7 +172,8 @@ public abstract class SystemUIGoogleModule {
             ConfigurationController configurationController,
             @Main Handler handler,
             AccessibilityManagerWrapper accessibilityManagerWrapper,
-            UiEventLogger uiEventLogger) {
+            UiEventLogger uiEventLogger,
+            ShadeExpansionStateManager shadeExpansionStateManager) {
         return new HeadsUpManagerPhone(
                 context,
                 headsUpManagerLogger,
@@ -185,7 +184,8 @@ public abstract class SystemUIGoogleModule {
                 configurationController,
                 handler,
                 accessibilityManagerWrapper,
-                uiEventLogger
+                uiEventLogger,
+                shadeExpansionStateManager
         );
     }
 
@@ -260,9 +260,6 @@ public abstract class SystemUIGoogleModule {
     @Binds
     @SysUISingleton
     abstract AssistManager bindAssistManagerGoogle(AssistManagerGoogle assistManager);
-
-    @Binds
-    abstract ThemeOverlayController provideThemeOverlayController(ThemeOverlayControllerPixys themeOverlayController);
 
     @Binds
     abstract ControlsTileResourceConfiguration bindControlsTileResourceConfiguration(GoogleControlsTileResourceConfigurationImpl configuration);
