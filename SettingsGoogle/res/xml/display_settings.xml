@@ -71,7 +71,15 @@
             android:widgetLayout="@null"
             settings:widgetLayout="@null"
             settings:controller="com.android.settings.display.DarkUIPreferenceController"
-            settings:keywords="@string/keywords_dark_ui_mode"/>
+            settings:keywords="@string/keywords_dark_ui_mode"
+            settings:widgetLayout="@null" />
+
+        <Preference
+            android:fragment="com.android.settings.dream.DreamSettings"
+            android:key="screensaver"
+            android:title="@string/screensaver_settings_title"
+            settings:controller="com.android.settings.display.ScreenSaverPreferenceController"
+            settings:keywords="@string/keywords_screensaver" />
 
         <Preference
             android:fragment="com.android.settings.accessibility.TextReadingPreferenceFragment"
