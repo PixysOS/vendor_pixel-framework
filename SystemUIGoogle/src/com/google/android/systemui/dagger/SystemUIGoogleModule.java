@@ -97,8 +97,6 @@ import com.google.android.systemui.statusbar.KeyguardIndicationControllerGoogle;
 import com.google.android.systemui.statusbar.policy.BatteryControllerImplGoogle;
 import com.google.android.systemui.elmyra.ServiceConfigurationGoogle;
 
-import com.pixys.android.systemui.theme.ThemeOverlayControllerPixys;
-
 import javax.inject.Named;
 
 import dagger.Binds;
@@ -265,7 +263,7 @@ public abstract class SystemUIGoogleModule {
     abstract AssistManager bindAssistManagerGoogle(AssistManagerGoogle assistManager);
 
     @Binds
-    abstract ThemeOverlayController provideThemeOverlayController(ThemeOverlayControllerPixys themeOverlayController);
+    abstract ThemeOverlayController provideThemeOverlayController(ThemeOverlayController themeOverlayController);
 
     @Binds
     abstract ControlsTileResourceConfiguration bindControlsTileResourceConfiguration(GoogleControlsTileResourceConfigurationImpl configuration);
