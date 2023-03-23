@@ -67,11 +67,6 @@
     <!-- Ring volume -->
     <com.android.settings.notification.VolumeSeekBarPreference
         android:key="ring_volume"
-        android:order="-160"
-        android:title="@string/ring_volume_option_title"
-        settings:controller="com.android.settings.notification.RingVolumePreferenceController" />
-
-    <com.android.settings.notification.VolumeSeekBarPreference
         android:icon="@drawable/ic_notifications"
         android:title="@string/ring_volume_option_title"
         android:order="-160"
@@ -86,13 +81,16 @@
         settings:controller=
             "com.android.settings.notification.NotificationVolumePreferenceController"/>
 
+    <!-- Alarm volume -->
     <com.android.settings.notification.VolumeSeekBarPreference
-        android:icon="@*android:drawable/ic_audio_alarm"
         android:key="alarm_volume"
-        android:order="-140"
+        android:icon="@*android:drawable/ic_audio_alarm"
         android:title="@string/alarm_volume_option_title"
-        settings:controller="com.android.settings.notification.AlarmVolumePreferenceController" />
-
+        android:order="-140"
+        settings:controller="com.android.settings.notification.AlarmVolumePreferenceController"/>
+x
+    <!-- TODO(b/174964721): make this a PrimarySwitchPreference -->
+    <!-- Interruptions -->
     <com.android.settingslib.RestrictedPreference
         android:key="zen_mode"
         android:title="@string/zen_mode_settings_title"
