@@ -60,8 +60,6 @@ class BatteryDefenderNotification {
     private int mBatteryLevel;
     private SharedPreferences mSharedPreferences;
 
-    private static final boolean DEBUG = false;
-
     BatteryDefenderNotification(Context context, UiEventLogger uiEventLogger) {
         mContext = context;
         mUiEventLogger = uiEventLogger;
