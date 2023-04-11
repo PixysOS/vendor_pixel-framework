@@ -46,9 +46,22 @@
         android:summary="@string/battery_auto_restriction_summary"
         settings:controller="com.android.settings.fuelgauge.AutoRestrictionPreferenceController"/>
 
+    <com.pixys.support.preference.SystemSettingSwitchPreference
+        android:key="arcane_idle_manager"
+        android:title="@string/idle_manager_title"
+        android:summary="@string/idle_manager_summary"
+        android:defaultValue="false" />
+
     <Preference
         android:key="restricted_app"
         android:title="@string/restricted_app_title"/>
+
+    <Preference
+        android:key="high_power_apps"
+        android:title="@string/high_power_apps"
+        android:summary="@string/high_power_apps_summary">
+        <intent android:action="android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS" />
+    </Preference>
 
     <com.android.settingslib.widget.FooterPreference
         android:key="smart_battery_detail_footer"
