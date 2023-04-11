@@ -122,6 +122,7 @@ import com.google.android.systemui.dreamliner.DockIndicationController;
 import com.google.android.systemui.dreamliner.DockObserver;
 import com.google.android.systemui.reversecharging.ReverseChargingViewController;
 import com.google.android.systemui.statusbar.KeyguardIndicationControllerGoogle;
+import com.android.systemui.statusbar.policy.BurnInProtectionController;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -139,6 +140,7 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
     private final KeyguardIndicationControllerGoogle mKeyguardIndicationController;
     private final Optional<ReverseChargingViewController> mReverseChargingViewControllerOptional;
     private final SysuiStatusBarStateController mStatusBarStateController;
+    private final BurnInProtectionController mBurnInProtectionController;
 
     private long mAnimStartTime;
     private int mReceivingBatteryLevel;
@@ -237,6 +239,7 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
             WiredChargingRippleController wiredChargingRippleController,
             TunerService tunerService,
             IDreamManager dreamManager,
+            BurnInProtectionController burnInProtectionController,
             Optional<ReverseChargingViewController> reverseChargingViewControllerOptional,
             KeyguardIndicationControllerGoogle keyguardIndicationControllerGoogle,
             Lazy<CameraLauncher> cameraLauncherLazy,
@@ -269,7 +272,7 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
                 featureFlags, keyguardUnlockAnimationController, delayableExecutor,
                 messageRouter, wallpaperManager, startingSurfaceOptional, activityLaunchAnimator,
                 jankMonitor, deviceStateManager, wiredChargingRippleController,
-                tunerService, dreamManager, cameraLauncherLazy, lightRevealScrimViewModelLazy);
+                tunerService, dreamManager, cameraLauncherLazy, lightRevealScrimViewModelLazy, burnInProtectionController);
        this.mContext = context;
         mBatteryStateChangeCallback = new BatteryController.BatteryStateChangeCallback() {
             @Override
@@ -302,6 +305,7 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
         mReverseChargingViewControllerOptional = reverseChargingViewControllerOptional;
         mKeyguardIndicationController = keyguardIndicationControllerGoogle;
         mStatusBarStateController = statusBarStateController;
+        mBurnInProtectionController = burnInProtectionController;
     }
 
     @Override
