@@ -89,6 +89,7 @@ import com.google.android.systemui.dreamliner.dagger.DreamlinerModule;
 import com.google.android.systemui.power.dagger.PowerModuleGoogle;
 import com.google.android.systemui.qs.dagger.QSModuleGoogle;
 import com.google.android.systemui.qs.tileimpl.QSFactoryImplGoogle;
+import com.google.android.systemui.qs.tileimpl.GoogleQSModule;
 import com.google.android.systemui.reversecharging.ReverseChargingController;
 import com.google.android.systemui.reversecharging.dagger.ReverseChargingModule;
 import com.google.android.systemui.statusbar.dagger.StartCentralSurfacesGoogleModule;
@@ -107,6 +108,7 @@ import dagger.Lazy;
 @Module(includes = {
         GestureModule.class,
         MediaModule.class,
+        GoogleQSModule.class,
         PowerModuleGoogle.class,
         QSModuleGoogle.class,
         ReferenceScreenshotModule.class,

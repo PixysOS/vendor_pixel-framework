@@ -36,6 +36,9 @@ import com.android.systemui.statusbar.policy.KeyguardStateController;
 import javax.inject.Inject;
 
 public class BatterySaverTileGoogle extends BatterySaverTile {
+
+    public static final String TILE_SPEC = "battery";
+
     private boolean mExtreme;
 
     @Inject
