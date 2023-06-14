@@ -28,17 +28,6 @@
             android:summary="@string/summary_placeholder"
             settings:keywords="@string/keywords_lock_screen_notif"/>
 
-        <com.pixys.support.preference.SecureSettingListPreference
-            android:key="face_unlock_method"
-            android:title="@string/face_unlock_method_title"
-            android:summary="%s"
-            android:dialogTitle="@string/face_unlock_method_title"
-            android:entries="@array/face_unlock_method_entries"
-            android:entryValues="@array/face_unlock_method_values"
-            android:defaultValue="0"
-            settings:searchable="false"
-            settings:controller="com.android.settings.biometrics.face.FaceSettingsLockscreenUnlockMethodPreferenceController" />
-
         <SwitchPreference
             android:key="security_display_lockscreen_bypass"
             android:title="@string/lockscreen_bypass_title"
@@ -90,13 +79,6 @@
             android:title="@string/lockscreen_double_line_clock_setting_toggle"
             android:summary="@string/lockscreen_double_line_clock_summary"
             settings:controller="com.android.settings.display.LockscreenClockPreferenceController" />
-
-      <com.pixys.support.preference.SystemSettingSwitchPreference
-            android:key="enable_ripple_effect"
-            android:title="@string/enable_fingerprint_ripple_effect_title"
-            android:summary="@string/enable_fingerprint_ripple_effect_summary"
-            android:defaultValue="true" />
-
     </PreferenceCategory>
 
     <PreferenceCategory
