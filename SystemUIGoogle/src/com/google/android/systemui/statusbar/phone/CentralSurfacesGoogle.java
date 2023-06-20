@@ -145,6 +145,7 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
     private final KeyguardIndicationControllerGoogle mKeyguardIndicationController;
     private final SysuiStatusBarStateController mStatusBarStateController;
     private final Optional<ReverseChargingViewController> mReverseChargingViewControllerOptional;
+    private final WallpaperNotifier mWallpaperNotifier;
     private final BurnInProtectionController mBurnInProtectionController;
 
     private long mAnimStartTime;
@@ -244,6 +245,7 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
             WiredChargingRippleController wiredChargingRippleController,
             TunerService tunerService,
             IDreamManager dreamManager,
+            WallpaperNotifier wallpaperNotifier,
             BurnInProtectionController burnInProtectionController,
             Optional<ReverseChargingViewController> reverseChargingViewControllerOptional,
             KeyguardIndicationControllerGoogle keyguardIndicationControllerGoogle,
@@ -313,12 +315,14 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
         mReverseChargingViewControllerOptional = reverseChargingViewControllerOptional;
         mKeyguardIndicationController = keyguardIndicationControllerGoogle;
         mStatusBarStateController = statusBarStateController;
+        mWallpaperNotifier = wallpaperNotifier;
         mBurnInProtectionController = burnInProtectionController;
     }
 
     @Override
     public void start() {
         super.start();
+        mWallpaperNotifier.attach();
         mBatteryController.observe(getLifecycle(), mBatteryStateChangeCallback);
         DockObserver dockObserver = (DockObserver) Dependency.get(DockManager.class);
         dockObserver.setDreamlinerGear((ImageView) mNotificationShadeWindowView.findViewById(R.id.dreamliner_gear));
