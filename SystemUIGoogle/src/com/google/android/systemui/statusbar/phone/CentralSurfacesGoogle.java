@@ -126,6 +126,8 @@ import com.google.android.systemui.dreamliner.DockObserver;
 import com.google.android.systemui.reversecharging.ReverseChargingViewController;
 import com.google.android.systemui.statusbar.KeyguardIndicationControllerGoogle;
 import com.android.systemui.statusbar.policy.BurnInProtectionController;
+import com.google.android.systemui.NotificationLockscreenUserManagerGoogle;
+import com.google.android.systemui.smartspace.SmartSpaceController;
 
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -139,10 +141,12 @@ import dagger.Lazy;
 @SysUISingleton
 public class CentralSurfacesGoogle extends CentralSurfacesImpl {
 
-    private static final boolean DEBUG = Log.isLoggable("StatusBarGoogle", 3);
+    private static final boolean DEBUG = Log.isLoggable("CentralSurfacesGoogle", 3);
     private final BatteryController.BatteryStateChangeCallback mBatteryStateChangeCallback;
     private final KeyguardIndicationControllerGoogle mKeyguardIndicationController;
     private final SysuiStatusBarStateController mStatusBarStateController;
+    private final SmartSpaceController mSmartSpaceController;
+    private final NotificationLockscreenUserManagerGoogle mNotificationLockscreenUserManagerGoogle;
     private final Optional<ReverseChargingViewController> mReverseChargingViewControllerOptional;
     private final WallpaperNotifier mWallpaperNotifier;
     private final BurnInProtectionController mBurnInProtectionController;
@@ -183,7 +187,7 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
             MetricsLogger metricsLogger,
             @UiBackground Executor uiBgExecutor,
             NotificationMediaManager notificationMediaManager,
-            NotificationLockscreenUserManager lockScreenUserManager,
+            NotificationLockscreenUserManagerGoogle notificationLockscreenUserManagerGoogle,
             NotificationRemoteInputManager remoteInputManager,
             UserSwitcherController userSwitcherController,
             BatteryController batteryController,
@@ -245,6 +249,7 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
             IDreamManager dreamManager,
             WallpaperNotifier wallpaperNotifier,
             BurnInProtectionController burnInProtectionController,
+            SmartSpaceController smartSpaceController,
             Optional<ReverseChargingViewController> reverseChargingViewControllerOptional,
             KeyguardIndicationControllerGoogle keyguardIndicationControllerGoogle,
             Lazy<CameraLauncher> cameraLauncherLazy,
@@ -260,7 +265,7 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
                 broadcastDispatcher, notificationGutsManager, notificationLogger, notificationInterruptStateProvider,
                 shadeExpansionStateManager, keyguardViewMediator,
                 displayMetrics, metricsLogger, uiBgExecutor, notificationMediaManager,
-                lockScreenUserManager, remoteInputManager, userSwitcherController,
+                notificationLockscreenUserManagerGoogle,, remoteInputManager, userSwitcherController,
                 batteryController, colorExtractor, screenLifecycle,
                 wakefulnessLifecycle, statusBarStateController,
                 bubblesOptional, deviceProvisionedController,
@@ -293,7 +298,7 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
                     mReverseChargingAnimShown = false;
                 }
                 if (DEBUG) {
-                    Log.d("StatusBarGoogle", "onBatteryLevelChanged(): level=" + i + ",wlc=" + (mBatteryController.isWirelessCharging() ? 1 : 0) + ",wlcs=" + mChargingAnimShown + ",rtxs=" + mReverseChargingAnimShown + ",this=" + this);
+                    Log.d("CentralSurfacesGoogle", "onBatteryLevelChanged(): level=" + i + ",wlc=" + (mBatteryController.isWirelessCharging() ? 1 : 0) + ",wlcs=" + mChargingAnimShown + ",rtxs=" + mReverseChargingAnimShown + ",this=" + this);
                 }
             }
 
@@ -306,7 +311,7 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
                     showChargingAnimation(mReceivingBatteryLevel, i, j);
                 }
                 if (DEBUG) {
-                    Log.d("StatusBarGoogle", "onReverseChanged(): rtx=" + (z ? 1 : 0) + ",rxlevel=" + mReceivingBatteryLevel + ",level=" + i + ",name=" + str + ",wlc=" + (mBatteryController.isWirelessCharging() ? 1 : 0) + ",wlcs=" + mChargingAnimShown + ",rtxs=" + mReverseChargingAnimShown + ",this=" + this);
+                    Log.d("CentralSurfacesGoogle", "onReverseChanged(): rtx=" + (z ? 1 : 0) + ",rxlevel=" + mReceivingBatteryLevel + ",level=" + i + ",name=" + str + ",wlc=" + (mBatteryController.isWirelessCharging() ? 1 : 0) + ",wlcs=" + mChargingAnimShown + ",rtxs=" + mReverseChargingAnimShown + ",this=" + this);
                 }
             }
         };
@@ -315,6 +320,8 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
         mStatusBarStateController = statusBarStateController;
         mWallpaperNotifier = wallpaperNotifier;
         mBurnInProtectionController = burnInProtectionController;
+        mSmartSpaceController = smartSpaceController;
+        mNotificationLockscreenUserManagerGoogle = notificationLockscreenUserManagerGoogle;
     }
 
     @Override
@@ -330,15 +337,21 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
         if (mReverseChargingViewControllerOptional.isPresent()) {
             mReverseChargingViewControllerOptional.get().initialize();
         }
+        mNotificationLockscreenUserManagerGoogle.updateSmartSpaceVisibilitySettings();
     }
 
     @Override
     public void showWirelessChargingAnimation(int i) {
         if (DEBUG) {
-            Log.d("StatusBarGoogle", "showWirelessChargingAnimation()");
+            Log.d("CentralSurfacesGoogle", "showWirelessChargingAnimation()");
         }
         mChargingAnimShown = true;
         super.showWirelessChargingAnimation(i);
         mAnimStartTime = SystemClock.uptimeMillis();
+    }
+    @Override
+    public void setLockscreenUser(int i) {
+        super.setLockscreenUser(i);
+        mSmartSpaceController.reloadData();
     }
 }
