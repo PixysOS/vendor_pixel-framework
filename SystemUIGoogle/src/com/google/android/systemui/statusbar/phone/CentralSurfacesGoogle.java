@@ -265,7 +265,7 @@ public class CentralSurfacesGoogle extends CentralSurfacesImpl {
                 broadcastDispatcher, notificationGutsManager, notificationLogger, notificationInterruptStateProvider,
                 shadeExpansionStateManager, keyguardViewMediator,
                 displayMetrics, metricsLogger, uiBgExecutor, notificationMediaManager,
-                notificationLockscreenUserManagerGoogle,, remoteInputManager, userSwitcherController,
+                notificationLockscreenUserManagerGoogle, remoteInputManager, userSwitcherController,
                 batteryController, colorExtractor, screenLifecycle,
                 wakefulnessLifecycle, statusBarStateController,
                 bubblesOptional, deviceProvisionedController,
