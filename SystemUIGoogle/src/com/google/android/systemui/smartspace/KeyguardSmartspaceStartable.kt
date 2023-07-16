@@ -35,13 +35,13 @@ constructor(
     private val zenController: KeyguardZenAlarmViewController,
     private val mediaController: KeyguardMediaViewController,
     private val initializationChecker: InitializationChecker
-) : CoreStartable(context) {
+) : CoreStartable {
     override fun start() {
         when {
             !initializationChecker.initializeComponents() -> {
                 return
             }
-            featureFlags.isEnabled(Flags.SMARTSPACE) -> {
+            initializationChecker.initializeComponents() -> {
                 zenController.init()
                 mediaController.init()
             }
