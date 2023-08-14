@@ -59,8 +59,6 @@ class BatteryDefenderNotification {
     private int mBatteryLevel;
     private SharedPreferences mSharedPreferences;
 
-    private static final boolean DEBUG = false;
-
     BatteryDefenderNotification(Context context, UiEventLogger uiEventLogger) {
         mContext = context;
         mUiEventLogger = uiEventLogger;
@@ -86,7 +84,7 @@ class BatteryDefenderNotification {
             z = true;
         }
         boolean isFullyCharged = PowerUtils.isFullyCharged(intent);
-        if (DEBUG) Log.d(TAG, "isPlugged: " + z2 + " | isOverheated: " + z + " | defenderEnabled: " + mDefenderEnabled + " | isCharged: " + isFullyCharged);
+        Log.d(TAG, "isPlugged: " + z2 + " | isOverheated: " + z + " | defenderEnabled: " + mDefenderEnabled + " | isCharged: " + isFullyCharged);
         if (isFullyCharged && mPostNotificationVisible) {
             cancelPostNotification();
         }
@@ -187,9 +185,7 @@ class BatteryDefenderNotification {
     }
 
     private static IGoogleBattery initHalInterface(IBinder.DeathRecipient deathReceiver) {
-        if (DEBUG) {
-            Log.d(TAG, "initHalInterface");
-        }
+        Log.d(TAG, "initHalInterface");
         try {
             IBinder binder = Binder.allowBlocking(ServiceManager.waitForDeclaredService("vendor.google.google_battery.IGoogleBattery/default"));
             IGoogleBattery batteryInterface = null;
@@ -207,9 +203,7 @@ class BatteryDefenderNotification {
     }
 
     private static void destroyHalInterface(IGoogleBattery iGoogleBattery, IBinder.DeathRecipient deathRecipient) {
-        if (DEBUG) {
-            Log.d(TAG, "destroyHalInterface");
-        }
+        Log.d(TAG, "destroyHalInterface");
         if (deathRecipient != null && iGoogleBattery != null) {
             iGoogleBattery.asBinder().unlinkToDeath(deathRecipient, 0);
         }
