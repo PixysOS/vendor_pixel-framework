@@ -42,8 +42,6 @@ public class AmbientIndicationService extends BroadcastReceiver {
     };
     private final AlarmManager.OnAlarmListener mHideIndicationListener;
 
-    private CharSequence lastTitle;
-
     public AmbientIndicationService(Context context, AmbientIndicationContainer ambientIndicationContainer, AlarmManager alarmManager) {
         mContext = context;
         mAmbientIndicationContainer = ambientIndicationContainer;
@@ -75,16 +73,8 @@ public class AmbientIndicationService extends BroadcastReceiver {
                 boolean booleanExtra = intent.getBooleanExtra("com.google.android.ambientindication.extra.SKIP_UNLOCK", false);
                 int intExtra = intent.getIntExtra("com.google.android.ambientindication.extra.ICON_OVERRIDE", 0);
                 String stringExtra = intent.getStringExtra("com.google.android.ambientindication.extra.ICON_DESCRIPTION");
-                CharSequence newTitle = intent.getCharSequenceExtra("com.google.android.ambientindication.extra.TEXT");
-                mAmbientIndicationContainer.setAmbientMusic(newTitle, (PendingIntent) intent.getParcelableExtra("com.google.android.ambientindication.extra.OPEN_INTENT"), (PendingIntent) intent.getParcelableExtra("com.google.android.ambientindication.extra.FAVORITING_INTENT"), intExtra, booleanExtra, stringExtra);
+                mAmbientIndicationContainer.setAmbientMusic(intent.getCharSequenceExtra("com.google.android.ambientindication.extra.TEXT"), (PendingIntent) intent.getParcelableExtra("com.google.android.ambientindication.extra.OPEN_INTENT"), (PendingIntent) intent.getParcelableExtra("com.google.android.ambientindication.extra.FAVORITING_INTENT"), intExtra, booleanExtra, stringExtra);
                 mAlarmManager.setExact(2, SystemClock.elapsedRealtime() + min, "AmbientIndication", mHideIndicationListener, null);
-                // Trigger an ambient pulse event only if a new title has been recognized
-                if (!newTitle.equals(lastTitle)) {
-                    lastTitle = newTitle;
-                    Log.i("AmbientIndication", "Sending ambient pulse event for: " + newTitle);
-                    mContext.sendBroadcastAsUser(new Intent("com.android.systemui.doze.pulse"),
-                        new UserHandle(UserHandle.USER_CURRENT));
-                }
                 Log.i("AmbientIndication", "Showing ambient indication.");
             }
         }
