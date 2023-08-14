@@ -39,13 +39,13 @@ import com.android.keyguard.KeyguardUpdateMonitorCallback;
 import com.android.keyguard.logging.KeyguardLogger;
 import com.android.settingslib.fuelgauge.BatteryStatus;
 import com.android.systemui.R;
+import com.android.systemui.biometrics.AuthController;
 import com.android.systemui.biometrics.FaceHelpMessageDeferral;
 import com.android.systemui.broadcast.BroadcastDispatcher;
 import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.dagger.qualifiers.Background;
 import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.dock.DockManager;
-import com.android.systemui.biometrics.AuthController;
 import com.android.systemui.keyguard.KeyguardIndication;
 import com.android.systemui.keyguard.ScreenLifecycle;
 import com.android.systemui.plugins.FalsingManager;
@@ -55,7 +55,6 @@ import com.android.systemui.statusbar.phone.KeyguardBypassController;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.util.DeviceConfigProxy;
 import com.android.systemui.util.concurrency.DelayableExecutor;
-import com.android.systemui.util.time.DateFormatUtil;
 import com.android.systemui.util.wakelock.WakeLock;
 
 import com.google.android.systemui.googlebattery.AdaptiveChargingManager;
@@ -128,7 +127,10 @@ public class KeyguardIndicationControllerGoogle extends KeyguardIndicationContro
             KeyguardLogger keyguardLogger,
             AlternateBouncerInteractor alternateBouncerInteractor,
             AlarmManager alarmManager) {
-        super(context, mainLooper, wakeLockBuilder, keyguardStateController, statusBarStateController, keyguardUpdateMonitor, dockManager, broadcastDispatcher, devicePolicyManager, iBatteryStats, userManager, executor, bgExecutor, falsingManager, authController, lockPatternUtils, screenLifecycle, keyguardBypassController, accessibilityManager, faceHelpMessageDeferral, keyguardLogger, alternateBouncerInteractor, alarmManager);
+        super(context, mainLooper, wakeLockBuilder, keyguardStateController, statusBarStateController, keyguardUpdateMonitor,
+            dockManager, broadcastDispatcher, devicePolicyManager, iBatteryStats, userManager, executor, bgExecutor,
+            falsingManager, authController, lockPatternUtils, screenLifecycle, keyguardBypassController,
+            accessibilityManager, faceHelpMessageDeferral, keyguardLogger, alternateBouncerInteractor, alarmManager);
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public final void onReceive(Context context, Intent intent) {
@@ -139,8 +141,7 @@ public class KeyguardIndicationControllerGoogle extends KeyguardIndicationContro
         };
         mAdaptiveChargingStatusReceiver = new AdaptiveChargingManager.AdaptiveChargingStatusReceiver() {
             @Override
-            public void onDestroyInterface() {
-            }
+            public void onDestroyInterface() {}
 
             @Override
             public void onReceiveStatus(int seconds, String stage) {
