@@ -20,6 +20,36 @@
     xmlns:settings="http://schemas.android.com/apk/res-auto"
     android:title="@string/gesture_preference_title">
 
+<PreferenceCategory 
+    android:title="@string/aware_category_gesture" 
+    android:key="aware_gestures" 
+    settings:controller="com.google.android.settings.aware.AwareGesturesCategoryPreferenceController" 
+    settings:keywords="TYPE_DYNAMIC_REFERENCE">
+
+    <com.google.android.settings.aware.TapGestureDialogPreference 
+        android:title="@string/gesture_tap_title" 
+        android:key="gesture_tap_summary" 
+        settings:controller="com.google.android.settings.aware.TapDialogGesturePreferenceController" 
+        settings:searchable="false" />
+
+    <com.google.android.settings.aware.SkipGestureDialogPreference 
+        android:title="@string/gesture_skip_title"
+        android:key="gesture_skip_summary" 
+        settings:controller="com.google.android.settings.aware.SkipDialogGesturePreferenceController" 
+        settings:searchable="false" />
+
+    <com.google.android.settings.aware.SilenceGestureDialogPreference 
+        android:title="@string/gesture_silence_title" 
+        android:key="gesture_silence_summary" 
+        settings:controller="com.google.android.settings.aware.SilenceDialogGesturePreferenceController" 
+        settings:searchable="false" />
+</PreferenceCategory>
+
+<PreferenceCategory 
+    android:title="@string/other_gestures_category_title" 
+    android:key="other_gestures" 
+    settings:controller="com.google.android.settings.aware.AwareGesturesCategoryPreferenceController" />
+
     <Preference
         android:key="gesture_assist_input_summary"
         android:title="@string/assist_gesture_title"

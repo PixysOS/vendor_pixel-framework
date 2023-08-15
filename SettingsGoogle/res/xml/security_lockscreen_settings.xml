@@ -102,6 +102,19 @@
             settings:controller="com.android.settings.display.AmbientDisplayAlwaysOnPreferenceController"
             settings:userRestriction="no_ambient_display" />
 
+        <com.android.settingslib.RestrictedPreference 
+            android:title="@string/aware_display_settings_title" 
+            android:key="aware_presence" 
+            android:fragment="com.google.android.settings.aware.AwareDisplaySettings" 
+            settings:controller="com.google.android.settings.aware.AwareDisplayPreferenceController" 
+            settings:keywords="@string/keywords_aware_settings" 
+            settings:userRestriction="no_ambient_display" />
+         <com.google.android.settings.aware.WakeScreenGestureDialogPreference 
+            android:title="@string/ambient_display_wake_screen_title" 
+            android:key="ambient_display_wake_screen" 
+            settings:controller="com.google.android.settings.aware.WakeScreenDialogGesturePreferenceController" 
+            settings:keywords="TYPE_DYNAMIC_REFERENCE" settings:searchable="false" />
+		
         <Preference
             android:key="ambient_display_tap"
             android:title="@string/ambient_display_tap_screen_title"
