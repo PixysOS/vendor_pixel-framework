@@ -112,4 +112,8 @@
         <item>@color/bt_color_icon_6</item>
         <item>@color/bt_color_icon_7</item>
     </array>
+    <string-array name="config_pluginAllowlist" translatable="false">
+         <item>com.android.systemui</item>
+         <item>com.google.oslo</item>
+     </string-array>
 </resources>

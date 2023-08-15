@@ -418,6 +418,7 @@ Backup data will not count towards your Drive storage quota. Large files, or fil
     <string name="keywords_assist_gesture_launch">gesture, edge, side, active edge, squeeze, grip, assist, assistant, squeeze, ok google, google assistant</string>
     <string name="keywords_assist_gesture_silence">gesture, edge, side, active edge, silence, snooze, alarm, incoming call, quiet, display, lockscreen, squeeze, grip, stop</string>
     <string name="keywords_assist_gesture_wake">gesture, edge, side, active edge, wake, notifications, screen, display, screen off, screen on, squeeze, asleep, sleep, grip</string>
+    <string name="keywords_aware_settings">Sensor, Proximity, Radar, Gestures, Air Gestures, Reach to check phone, Movement, Motion, sense, detect, Soli</string>
     <string name="keywords_battery_share">battery share, wireless charging</string>
     <string name="keywords_battery_share_settings">battery share, reverse wireless charging</string>
     <string name="keywords_content_capture">content capture, app content, app data</string>
