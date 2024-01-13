@@ -21,4 +21,10 @@
         android:summary="@string/search_long_press_home_button_summary"
         android:title="@string/search_long_press_home_button_title"
         settings:controller="com.google.android.settings.gestures.ButtonNavigationSettingsGoogleSearchController" />
+     <SwitchPreference 
+	android:key="swap_back_recents"
+	android:title="@string/swap_back_recents_title" 
+        android:summary="@string/swap_back_recents_summary" 
+        settings:controller="com.android.settings.gestures.ButtonNavigationSettingsSwapController" />
+
 </PreferenceScreen>
