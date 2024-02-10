@@ -680,4 +680,6 @@ To improve performance, you can set up Face Unlock again in Settings."</string>
     <string name="led_preference_title">LED indicator patterns</string>
     <string name="legal_source_code_description">Details about the source code for components made available as open source can be found at the Pixel help center.</string>
     <string name="legal_source_code_title">Source code</string>
+    <string name="other_gestures_category_title">Handheld Gestures</string>
+
 </resources>
