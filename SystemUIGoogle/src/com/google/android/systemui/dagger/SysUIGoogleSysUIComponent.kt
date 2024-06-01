@@ -57,17 +57,14 @@ interface SysUIGoogleSysUIComponent : SysUIComponent {
 
     /** Member injection into SystemUIAppComponentFactoryBase. */
     override fun inject(factory: SystemUIAppComponentFactoryBase)
-
-    /** Member injection into KeyguardSliceProvider. */
-    override fun inject(keyguardSliceProvider: KeyguardSliceProvider)
+    
+    /** Member injection into KeyguardSliceProviderGoogle. */
+    @SysUISingleton
+    fun inject(keyguardSliceProvider: KeyguardSliceProviderGoogle)
 
     /** Member injection into CustomizationProvider. */
     fun inject(customizationProvider: CustomizationProvider)
 
     /** Member injection into PeopleProvider. */
     override fun inject(peopleProvider: PeopleProvider)
-    
-    /** Member injection into KeyguardSliceProviderGoogle. */
-    @SysUISingleton
-    fun inject(keyguardSliceProvider: KeyguardSliceProviderGoogle)
 }
