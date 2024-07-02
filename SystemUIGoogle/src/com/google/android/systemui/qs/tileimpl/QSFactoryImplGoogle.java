@@ -22,7 +22,6 @@ import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.external.CustomTile;
 import com.android.systemui.qs.tileimpl.QSFactoryImpl;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
-import com.android.systemui.util.leak.GarbageMonitor;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -48,9 +47,9 @@ public class QSFactoryImplGoogle extends QSFactoryImpl {
     @Inject
     public QSFactoryImplGoogle(
             Lazy<QSHost> qsHostLazy,
-            Provider<CustomTile.Builder> customTileBuilderProvider,
+            Provider<CustomTile.Factory> customTileFactoryProvider,
             Map<String, Provider<QSTileImpl<?>>> tileMap) {
         super(qsHostLazy,
-                customTileBuilderProvider, tileMap);
+                customTileFactoryProvider, tileMap);
    }
 }

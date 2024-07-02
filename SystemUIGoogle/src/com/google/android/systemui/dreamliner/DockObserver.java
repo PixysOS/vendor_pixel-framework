@@ -16,6 +16,10 @@
 
 package com.google.android.systemui.dreamliner;
 
+import static com.android.systemui.statusbar.notification.interruption.VisualInterruptionType.BUBBLE;
+import static com.android.systemui.statusbar.notification.interruption.VisualInterruptionType.PEEK;
+import static com.android.systemui.statusbar.notification.interruption.VisualInterruptionType.PULSE;
+
 import androidx.annotation.NonNull;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -43,11 +47,16 @@ import android.widget.ImageView;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.Dependency;
 import com.android.systemui.dagger.qualifiers.Main;
+import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.dock.DockManager;
+import com.android.systemui.dock.DockManagerImpl;
 import com.android.systemui.plugins.statusbar.StatusBarStateController;
 import com.android.systemui.settings.UserTracker;
 import com.android.systemui.statusbar.notification.collection.NotificationEntry;
-import com.android.systemui.statusbar.notification.interruption.NotificationInterruptStateProvider;
+import com.android.systemui.statusbar.notification.interruption.VisualInterruptionCondition;
+import com.android.systemui.statusbar.notification.interruption.VisualInterruptionDecisionProvider;
+import com.android.systemui.statusbar.notification.interruption.VisualInterruptionType;
+import com.android.systemui.statusbar.notification.interruption.VisualInterruptionRefactor;
 import com.android.systemui.statusbar.notification.interruption.NotificationInterruptSuppressor;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
@@ -55,13 +64,19 @@ import com.android.systemui.util.concurrency.DelayableExecutor;
 import com.google.android.systemui.dreamliner.WirelessCharger;
 import com.google.android.systemui.elmyra.gates.KeyguardVisibility;
 
+import dagger.Lazy;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.Set;
 
-public class DockObserver extends BroadcastReceiver implements DockManager {
+import javax.inject.Inject;
+
+@SysUISingleton
+public class DockObserver extends DockManagerImpl {
     @VisibleForTesting
     static final String ACTION_ALIGN_STATE_CHANGE = "com.google.android.systemui.dreamliner.ALIGNMENT_CHANGE";
     @VisibleForTesting
@@ -99,11 +114,13 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
     private static final boolean DEBUG = Log.isLoggable("DLObserver", 3);
     @VisibleForTesting
     static volatile ExecutorService mSingleThreadExecutor;
-    private static boolean sIsDockingUiShowing = DEBUG;
+    private static boolean sIsDockingUiShowing;
     @VisibleForTesting
     final DreamlinerBroadcastReceiver mDreamlinerReceiver = new DreamlinerBroadcastReceiver();
+    private final Lazy<VisualInterruptionDecisionProvider> mVisualInterruptionDecisionProviderLazy;
     private final List<DockManager.AlignmentStateListener> mAlignmentStateListeners;
     private final List<DockManager.DockEventListener> mClients;
+    private final NotificationInterruptSuppressor mInterruptSuppressor;
     private final ConfigurationController mConfigurationController;
     private final Context mContext;
     private final DockAlignmentController mDockAlignmentController;
@@ -136,20 +153,60 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
                 }
             };
 
-    public DockObserver(final Context context, WirelessCharger wirelessCharger, StatusBarStateController statusBarStateController,
-        NotificationInterruptStateProvider notificationInterruptStateProvider, ConfigurationController configurationController,
-        DelayableExecutor delayableExecutor, @NonNull UserTracker userTracker, @Main Handler mainHandler) {
-        NotificationInterruptSuppressor notificationInterruptSuppressor = new NotificationInterruptSuppressor() {
-            @Override
-            public String getName() {
-                return "DLObserver";
+    private BroadcastReceiver stateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null) {
+                return;
             }
+            if (DEBUG) {
+                Log.i("DLObserver", "onReceive(); " + intent.getAction());
+            }
+            String action = intent.getAction();
+            switch (action) {
+                case "android.intent.action.ACTION_POWER_DISCONNECTED":
+                    stopDreamlinerService(context);
+                    sIsDockingUiShowing = false;
+                    break;
+                case "com.google.android.systemui.dreamliner.ACTION_SET_FEATURES":
+                    setFeatures(intent);
+                    break;
+                case "android.intent.action.BOOT_COMPLETED":
+                    break;
+                case "com.google.android.systemui.dreamliner.ACTION_GET_FEATURES":
+                    getFeatures(intent);
+                    break;
+                case "android.intent.action.ACTION_POWER_CONNECTED":
+                    checkIsDockPresentIfNeeded(context);
+                    break;
+                case ACTION_REBIND_DOCK_SERVICE:
+                    updateCurrentDockingStatus(context);
+                    break;
+            }
+        }
+    };
 
-            @Override
-            public boolean suppressInterruptions(NotificationEntry notificationEntry) {
-                return DockObserver.isDockingUiShowing();
-            }
-        };
+    @Inject
+    public DockObserver(final Context context, WirelessCharger wirelessCharger,
+        StatusBarStateController statusBarStateController,
+        Lazy<VisualInterruptionDecisionProvider> visualInterruptionDecisionProviderLazy,
+        ConfigurationController configurationController,
+        @Main DelayableExecutor delayableExecutor,
+        @NonNull UserTracker userTracker, @Main Handler mainHandler
+    ) {
+        mInterruptSuppressor =
+            new NotificationInterruptSuppressor() {
+                @Override
+                public String getName() {
+                    return "DLObserver";
+                }
+
+                @Override
+                public boolean suppressInterruptions(NotificationEntry notificationEntry) {
+                    return DockObserver.isDockingUiShowing();
+                }
+            };
+        mVisualInterruptionDecisionProviderLazy = visualInterruptionDecisionProviderLazy;
         mMainExecutor = delayableExecutor;
         mContext = context;
         mClients = new ArrayList();
@@ -159,13 +216,37 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
             Log.i("DLObserver", "wireless charger is null, check dock component.");
         }
         mStatusBarStateController = statusBarStateController;
-        context.registerReceiver(this, getDockIntentFilter(), PERMISSION_WIRELESS_CHARGER_STATUS, null, 2);
+        context.registerReceiver(stateReceiver, getDockIntentFilter(), PERMISSION_WIRELESS_CHARGER_STATUS, null, 2);
         mDockAlignmentController = new DockAlignmentController(wirelessCharger, this);
-        notificationInterruptStateProvider.addSuppressor(notificationInterruptSuppressor);
         mConfigurationController = configurationController;
         refreshFanLevel(null);
         mUserTracker = userTracker;
         mMainHandler = mainHandler;
+    }
+
+    private final VisualInterruptionCondition mDockModeCondition =
+            new VisualInterruptionCondition(Set.of(PEEK, PULSE, BUBBLE),
+                    "device in in dock mode") {
+                @Override
+                public boolean shouldSuppress() {
+                    return isDockingUiShowing();
+                }
+            };
+
+    public void addInterruptionSuppressor() {
+        if (VisualInterruptionRefactor.isEnabled()) {
+            mVisualInterruptionDecisionProviderLazy.get().addCondition(mDockModeCondition);
+        } else {
+            mVisualInterruptionDecisionProviderLazy.get().addLegacySuppressor(mInterruptSuppressor);
+        }
+    }
+
+    public void removeInterruptionSuppressor() {
+        if (VisualInterruptionRefactor.isEnabled()) {
+            mVisualInterruptionDecisionProviderLazy.get().addCondition(mDockModeCondition);
+        } else {
+            mVisualInterruptionDecisionProviderLazy.get().removeLegacySuppressor(mInterruptSuppressor);
+        }
     }
 
     private static void runOnBackgroundThread(Runnable runnable) {
@@ -204,7 +285,7 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
         if (!mClients.contains(dockEventListener)) {
             mClients.add(dockEventListener);
         }
-        mMainExecutor.execute((Runnable) () -> dockEventListener.onEvent(mDockState));
+        mMainExecutor.execute(() -> dockEventListener.onEvent(mDockState));
     }
 
     @Override
@@ -221,7 +302,7 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
         if (i == 1 || i == 2) {
             return true;
         }
-        return DEBUG;
+        return false;
     }
 
     @Override
@@ -229,7 +310,7 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
         if (mDockState == 2) {
             return true;
         }
-        return DEBUG;
+        return false;
     }
 
     @Override
@@ -333,21 +414,21 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
             if (DEBUG) {
                 Log.d("DLObserver", "null battery intent when checking plugged status");
             }
-            return DEBUG;
+            return false;
         }
         int intExtra = registerReceiver.getIntExtra("plugged", -1);
         if (DEBUG) {
             Log.d("DLObserver", "plugged = " + intExtra);
         }
         if (intExtra != 4) {
-            return DEBUG;
+            return false;
         }
         return true;
     }
 
     @VisibleForTesting
     void updateCurrentDockingStatus(Context context) {
-        notifyForceEnabledAmbientDisplay(DEBUG);
+        notifyForceEnabledAmbientDisplay(false);
         checkIsDockPresentIfNeeded(context);
     }
 
@@ -401,37 +482,6 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
         return intentFilter;
     }
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        if (intent == null) {
-            return;
-        }
-        if (DEBUG) {
-            Log.i("DLObserver", "onReceive(); " + intent.getAction());
-        }
-        String action = intent.getAction();
-        switch (action) {
-            case "android.intent.action.ACTION_POWER_DISCONNECTED":
-                stopDreamlinerService(context);
-                sIsDockingUiShowing = DEBUG;
-                break;
-            case "com.google.android.systemui.dreamliner.ACTION_SET_FEATURES":
-                setFeatures(intent);
-                break;
-            case "android.intent.action.BOOT_COMPLETED":
-                break;
-            case "com.google.android.systemui.dreamliner.ACTION_GET_FEATURES":
-                getFeatures(intent);
-                break;
-            case "android.intent.action.ACTION_POWER_CONNECTED":
-                checkIsDockPresentIfNeeded(context);
-                break;
-            case ACTION_REBIND_DOCK_SERVICE:
-                updateCurrentDockingStatus(context);
-                break;
-        }
-    }
-
     private synchronized void startDreamlinerService(Context context, int i, int i2, int i3) {
         notifyForceEnabledAmbientDisplay(true);
         if (mDreamlinerServiceConn == null) {
@@ -462,8 +512,9 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
     }
 
     private void stopDreamlinerService(Context context) {
-        notifyForceEnabledAmbientDisplay(DEBUG);
+        notifyForceEnabledAmbientDisplay(false);
         onDockStateChanged(0);
+        removeInterruptionSuppressor();
         try {
             if (mDreamlinerServiceConn == null) {
                 return;
@@ -485,7 +536,7 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
     private boolean assertNotNull(Object obj, String str) {
         if (obj == null) {
             Log.w("DLObserver", str + " is null");
-            return DEBUG;
+            return false;
         }
         return true;
     }
@@ -562,7 +613,7 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
             return;
         }
         final ResultReceiver resultReceiver = intent.getParcelableExtra("android.intent.extra.RESULT_RECEIVER");
-        boolean booleanExtra = intent.getBooleanExtra("enabled", DEBUG);
+        boolean booleanExtra = intent.getBooleanExtra("enabled", false);
         if (mDockGestureController != null) {
             mDockGestureController.setPhotoEnabled(booleanExtra);
         }
@@ -979,6 +1030,7 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
         @Override
         public void onBindingDied(ComponentName componentName) {
             stopDreamlinerService(mContext);
+            sIsDockingUiShowing = false;
         }
     }
 
@@ -996,6 +1048,7 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
                 Log.i("DLObserver", "isDockPresent() docked: " + z + ", id: " + i + ", type: " + ((int) b) + ", orientation: " + ((int) b2) + ", support GetInfo: " + z2);
             }
             if (z) {
+                addInterruptionSuppressor();
                 startDreamlinerService(mContext, b, b2, i);
             }
         }
@@ -1210,6 +1263,7 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
                     return;
                 case DockObserver.ACTION_DOCK_UI_IDLE:
                     sendDockIdleIntent(context);
+                    sIsDockingUiShowing = true;
                     return;
                 case DockObserver.ACTION_CHALLENGE:
                     triggerChallengeWithDock(intent);
@@ -1253,13 +1307,14 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
                     if (dockIndicationController == null) {
                         return;
                     }
-                    dockIndicationController.setShowing(intent.getBooleanExtra(DockObserver.KEY_SHOWING, DockObserver.DEBUG));
+                    dockIndicationController.setShowing(intent.getBooleanExtra(DockObserver.KEY_SHOWING, false));
                     return;
                 case "com.google.android.systemui.dreamliner.ACTION_GET_WPC_CERTIFICATE":
                     getWpcAuthCertificate(intent);
                     return;
                 case DockObserver.ACTION_DOCK_UI_ACTIVE:
                     sendDockActiveIntent(context);
+                    sIsDockingUiShowing = false;
                     return;
                 case "com.google.android.systemui.dreamliner.ACTION_GET_FAN_INFO":
                     getFanInformation(intent);
@@ -1392,7 +1447,7 @@ public class DockObserver extends BroadcastReceiver implements DockManager {
         public void unregisterReceiver(Context context) {
             if (mListening) {
                 context.unregisterReceiver(this);
-                mListening = DockObserver.DEBUG;
+                mListening = false;
             }
         }
     }

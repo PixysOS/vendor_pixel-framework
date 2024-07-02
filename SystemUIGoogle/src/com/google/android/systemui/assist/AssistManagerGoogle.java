@@ -18,6 +18,7 @@ package com.google.android.systemui.assist;
 
 import static android.view.Display.DEFAULT_DISPLAY;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +34,7 @@ import com.android.keyguard.KeyguardUpdateMonitorCallback;
 import com.android.systemui.assist.AssistLogger;
 import com.android.systemui.assist.AssistManager;
 import com.android.systemui.assist.AssistantSessionEvent;
+import com.android.systemui.assist.domain.interactor.AssistInteractor;
 import com.android.systemui.assist.PhoneStateMonitor;
 import com.android.systemui.assist.ui.DefaultUiController;
 import com.android.systemui.broadcast.BroadcastDispatcher;
@@ -50,6 +52,7 @@ import com.google.android.systemui.assist.uihints.AssistantPresenceHandler;
 import com.google.android.systemui.assist.uihints.GoogleDefaultUiController;
 import com.google.android.systemui.assist.uihints.NgaMessageHandler;
 import com.google.android.systemui.assist.uihints.NgaUiController;
+import com.android.systemui.user.domain.interactor.SelectedUserInteractor;
 import com.android.systemui.util.settings.SecureSettings;
 
 import javax.inject.Inject;
@@ -74,35 +77,40 @@ public class AssistManagerGoogle extends AssistManager {
     private AssistManager.UiController mUiController;
 
     @Inject
-    public AssistManagerGoogle(DeviceProvisionedController controller,
-                               Context context,
-                               AssistUtils assistUtils,
-                               CommandQueue commandQueue,
-                               PhoneStateMonitor phoneStateMonitor,
-                               OverviewProxyService overviewProxyService,
-                               Lazy<SysUiState> sysUiState,
-                               DefaultUiController defaultUiController,
-                               GoogleDefaultUiController googleDefaultUiController,
-                               AssistLogger assistLogger,
-                               @Main Handler handler,
-                               BroadcastDispatcher broadcastDispatcher,
-                               OpaEnabledDispatcher opaEnabledDispatcher,
-                               OpaEnabledReceiver opaEnabledReceiver,
-                               KeyguardUpdateMonitor keyguardUpdateMonitor,
-                               NavigationModeController navigationModeController,
-                               AssistantPresenceHandler assistantPresenceHandler,
-                               NgaUiController ngaUiController,
-                               NgaMessageHandler ngaMessageHandler,
-                               UserTracker userTracker,
-                               DisplayTracker displayTracker,
-                               SecureSettings secureSettings,
-                               IWindowManager iWindowManager) {
+    public AssistManagerGoogle(
+            DeviceProvisionedController controller,
+            Context context,
+            AssistUtils assistUtils,
+            CommandQueue commandQueue,
+            PhoneStateMonitor phoneStateMonitor,
+            OverviewProxyService overviewProxyService,
+            Lazy<SysUiState> sysUiState,
+            DefaultUiController defaultUiController,
+            AssistLogger assistLogger,
+            @Main Handler uiHandler,
+            UserTracker userTracker,
+            DisplayTracker displayTracker,
+            SecureSettings secureSettings,
+            SelectedUserInteractor selectedUserInteractor,
+            ActivityManager activityManager,
+            AssistInteractor interactor,
+            GoogleDefaultUiController googleDefaultUiController,
+            BroadcastDispatcher broadcastDispatcher,
+            OpaEnabledDispatcher opaEnabledDispatcher,
+            OpaEnabledReceiver opaEnabledReceiver,
+            KeyguardUpdateMonitor keyguardUpdateMonitor,
+            NavigationModeController navigationModeController,
+            AssistantPresenceHandler assistantPresenceHandler,
+            NgaUiController ngaUiController,
+            NgaMessageHandler ngaMessageHandler,
+            IWindowManager iWindowManager) {
         super(controller, context, assistUtils, commandQueue,
                 phoneStateMonitor, overviewProxyService,
                 sysUiState, defaultUiController,
-                assistLogger, handler, userTracker,
-                displayTracker, secureSettings);
-        mUiHandler = handler;
+                assistLogger, uiHandler, userTracker,
+                displayTracker, secureSettings,
+                selectedUserInteractor, activityManager, interactor);
+        mUiHandler = uiHandler;
         mDefaultUiController = googleDefaultUiController;
         mUiController = googleDefaultUiController;
         mNgaUiController = ngaUiController;
