@@ -100,19 +100,6 @@
     <uses-permission android:name="android.permission.ROTATE_SURFACE_FLINGER" />
     <uses-permission android:name="android.permission.WAKEUP_SURFACE_FLINGER" />
 
-        <provider
-            android:name="com.android.systemui.keyguard.KeyguardSliceProvider"
-            tools:node="remove">
-        </provider>
-
-        <provider
-            android:name="com.google.android.systemui.keyguard.KeyguardSliceProviderGoogle"
-            android:authorities="com.android.systemui.keyguard"
-            android:enabled="true"
-            android:exported="true"
-            android:grantUriPermissions="true">
-        </provider>
-
     <!-- Ambient pulse event -->
     <protected-broadcast android:name="com.android.systemui.doze.pulse" />
 
@@ -120,7 +107,19 @@
         android:appComponentFactory="com.google.android.systemui.SystemUIGoogleAppComponentFactory"
         tools:replace="android:appComponentFactory">
 
-        <service android:exported="true" android:name="com.google.android.systemui.elmyra.ElmyraServiceProxy" android:permission="com.google.android.elmyra.permission.CONFIGURE_ASSIST_GESTURE"/>
+       <provider
+            android:name="com.android.systemui.keyguard.KeyguardSliceProvider"
+            tools:node="remove">
+        </provider>
+
+        <provider
+            android:name="com.google.android.systemui.keyguard.KeyguardSliceProviderGoogle"  
+            android:authorities="com.android.systemui.keyguard"
+            android:enabled="true"
+            android:exported="true"
+            android:grantUriPermissions="true">
+        </provider>
+
         <service android:exported="true" android:name="com.google.android.systemui.columbus.ColumbusServiceProxy" android:permission="com.google.android.columbus.permission.CONFIGURE_COLUMBUS_GESTURE"/>
         <service android:exported="true" android:name="org.pixelexperience.systemui.columbus.ColumbusTargetRequestServiceWrapper">
             <intent-filter>
