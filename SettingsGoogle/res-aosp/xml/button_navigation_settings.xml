@@ -34,11 +34,4 @@
 
     </PreferenceCategory>
 
-    <SwitchPreference
-        android:key="swap_back_recents"
-        android:title="@string/swap_back_recents_title"
-        android:summary="@string/swap_back_recents_summary"
-        settings:controller="com.android.settings.gestures.ButtonNavigationSettingsSwapController"
-    />
-
 </PreferenceScreen>
